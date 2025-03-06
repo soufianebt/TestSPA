@@ -2,7 +2,7 @@ import singleSpaBackbone from "@emtecinc/single-spa-backbone";
 import "./main.js";
 
 const lifecycles = singleSpaBackbone({
-  BasePath: "backbone-app3",
+  BasePath: "backboneapp3",
   App: { AppPath: "src/app" },
   DomElementSetter: domElementSetter
 });
