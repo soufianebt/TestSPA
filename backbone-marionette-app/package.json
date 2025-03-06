@@ -6,7 +6,7 @@
     "build": "webpack --mode production"
   },
   "dependencies": {
-  "jquery": "1.11.3",
+  "jquery": "3.5.0",
   "backbone": "1.0.0",
   "backbone.marionette": "1.8.8",
   "underscore": "1.6.0",
