@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Root Config</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/regenerator-runtime@0.13.7/runtime.min.js"></script>
+
+  <!-- ✅ Correction de la CSP pour éviter les blocages -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self' https: localhost:*;
+    img-src 'self' https: localhost:* data:;
+    script-src 'unsafe-inline' 'unsafe-eval' https: localhost:* http:;
+    connect-src https: localhost:* ws://localhost:* ws://192.168.1.102:8081;
+    style-src 'unsafe-inline' https:;
+    object-src 'none';
+  ">
+
+  <meta name="importmap-type" content="systemjs-importmap" />
+
+  <!-- Import map global -->
+  <script type="systemjs-importmap">
+    {
+      "imports": {
+        "single-spa": "https://cdn.jsdelivr.net/npm/single-spa@5.9.0/lib/system/single-spa.min.js",
+        "jquery": "https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js",
+        "underscore": "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js",
+        "backbone": "https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js",
+        "backbone.marionette": "https://cdnjs.cloudflare.com/ajax/libs/backbone.marionette/1.8.8/backbone.marionette.min.js"
+      }
+    }
+  </script>
+
+  <script>
+    // ✅ Vérification que SystemJS est bien chargé avant utilisation
+    window.addEventListener("DOMContentLoaded", function () {
+      if (typeof System === "undefined") {
+        console.error("❌ SystemJS ne s'est pas chargé correctement.");
+      } else {
+        console.log("✅ SystemJS chargé avec succès.");
+
+        // ✅ Chargement des dépendances dans le bon ordre
+        System.import("jquery").then(() => {
+          console.log("✅ jQuery chargé");
+          window.$ = window.jQuery;
+          window.jQuery = window.$;
+          if (!window.$) throw new Error("❌ jQuery n'est pas défini !");
+          return System.import("underscore");
+        }).then(() => {
+          console.log("✅ Underscore.js chargé");
+          if (!window._) throw new Error("❌ Underscore.js n'est pas défini !");
+          console.log("📌 Vérification d'Underscore :", window._.each);
+          return System.import("backbone");
+        }).then(() => {
+          console.log("✅ Backbone.js chargé");
+          if (!window.Backbone) throw new Error("❌ Backbone.js n'est pas défini !");
+        }).catch(err => {
+          console.error("❌ Erreur lors du chargement des dépendances:", err);
+        });
+      }
+    });
+  </script>
+
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/single-spa@5.9.0/lib/system/single-spa.min.js" as="script" crossorigin="anonymous">
+
+  <% if (isLocal) { %>
+    <script type="systemjs-importmap">
+      {
+        "imports": {
+          "@root-org/root-config": "//localhost:9000/root-org-root-config.js",
+         
+          "@org/backbone-app3": "http://localhost:8082/bundle.js"
+        }
+      }
+    </script>
+  <% } %>
+  <script src="https://cdn.jsdelivr.net/npm/zone.js@0.11.3/dist/zone.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/import-map-overrides@2.2.0/dist/import-map-overrides.js"></script>
+
+  <% if (isLocal) { %>
+    <script src="https://cdn.jsdelivr.net/npm/systemjs@6.8.3/dist/system.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/systemjs@6.8.3/dist/extras/amd.js"></script>
+  <% } else { %>
+    <script src="https://cdn.jsdelivr.net/npm/systemjs@6.8.3/dist/system.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/systemjs@6.8.3/dist/extras/amd.min.js"></script>
+  <% } %>
+
+</head>
+<body>
+  <noscript>
+    You need to enable JavaScript to run this app.
+  </noscript>
+
+  <script>
+    // ✅ Vérification du chargement du root-config
+    System.import('@root-org/root-config')
+      .then(() => console.log('✅ Root config chargé avec succès'))
+      .catch(err => console.error('❌ Erreur lors du chargement du root config:', err));
+  </script>
+
+  <!-- ✅ Vérification du chargement de @org/backbone-app3 -->
+  
+  <import-map-overrides-full show-when-local-storage="devtools" dev-libs></import-map-overrides-full>
+</body>
+</html>

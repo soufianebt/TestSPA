@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Micro-Frontend Backbone</title>
+  
+  <!-- Load jQuery First -->
+  <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <script>
+    window.jQuery = window.$;
+    console.log("✅ Vérification après chargement:", window.jQuery?.fn ? "✔ jQuery est bien chargé" : "❌ jQuery est absent !");
+  </script>
+
+  <!-- SystemJS Import Map -->
+  <script type="systemjs-importmap">
+  {
+    "imports": {
+        "@org/backbone-app3": "http://localhost:8082/bundle.js"
+    }
+  }
+  </script>
+</head>
+<body>
+
+  <!-- `single-spa-entry.js` will create #backbone-app-container if needed -->
+  
+  <!-- Load SystemJS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/6.10.3/system.min.js"></script>
+  
+  <script>
+    console.log("🚀 Importing micro frontend...");
+    
+    System.import("@org/backbone-app3")
+      .then(() => console.log("✅ Micro frontend Backbone chargé avec succès"))
+      .catch(err => console.error("❌ Erreur lors du chargement du micro frontend:", err));
+  </script>
+
+</body>
+</html>
